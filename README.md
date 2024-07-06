@@ -1,6 +1,7 @@
 # React + TypeScript + Vite 
 > 此项目为react后台管理系统练习实操过程及笔记记录
 * [学习视频](https://www.bilibili.com/video/BV1FV4y157Zx?p=1&vd_source=4046650f4b6e75ab86067f7a5a418626)
+* [Antd](https://ant-design.antgroup.com/components/overview-cn)
 
 # 创建项目并且运行
 * node.js版本建议较新的稳定版本
@@ -139,6 +140,45 @@ npm i -D @types/node
 ```index.tsx
 
 ```
+# Antd的初步使用
+* 安装Antd Design
+```shell
+ npm install antd --save
+```
+* 安装图标所需要的模块
+```shell
+npm install --save @ant-design/icons
+```
+* ~~引入样式（目前v5版本已弃用less,无需引入)~~  [详见技术调整](https://ant-design.antgroup.com/docs/react/migration-v5-cn)
+```ts
+import "antd/dist/antd.less"
+```
+* 引入使用
+举例如下：
+```tsx
+import { useState } from 'react'
+import {Button} from 'antd';
+import {FastBackwardOutlined} from "@ant-design/icons";
+
+function App() {
+    const [count, setCount] = useState(0);
+
+  return (
+    <div className="App">
+        顶级组件
+        <Button type="primary">Primary Button</Button>
+        <FastBackwardOutlined style={{fontSize:"40px",color:"#08c"}}></FastBackwardOutlined>
+    </div>
+  )
+}
+
+export default App
+```
+
+
+
+
+
 
 
 

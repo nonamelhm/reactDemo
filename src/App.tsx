@@ -1,14 +1,15 @@
 import { useState } from 'react'
-import Comp1 from "@/components/Comp1";
-import Comp2 from "@/components/Comp2";
+import {Button} from 'antd';
+import {FastBackwardOutlined} from "@ant-design/icons";
+
 function App() {
     const [count, setCount] = useState(0);
 
   return (
     <div className="App">
         顶级组件
-        <Comp1></Comp1>
-        <Comp2></Comp2>
+        <Button type="primary">Primary Button</Button>
+        <FastBackwardOutlined style={{fontSize:"40px",color:"#08c"}}></FastBackwardOutlined>
     </div>
   )
 }
