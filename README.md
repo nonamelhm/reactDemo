@@ -133,10 +133,12 @@ npm i -D @types/node
 * components->Comp1->index.tsx
 * components->Comp1->comp1.scss
 * components->Comp2->index.tsx
+# scss的模块化管理
+1. 将components->Comp1->comp1.scss改成* components->Comp1->comp1.module.scss
+2. 引入使用
+```index.tsx
 
-
-
-
+```
 
 
 
