@@ -336,7 +336,7 @@ const baseRoute = ()=>(
 export default baseRoute;
 ```
 ## 路由第二种方式(React18版本)
-### 路由表写法
+### React18:路由表写法
 1. 首先创建路由表routes=>index.tsx
 ```tsx
 import Home from '@/views/Home';
@@ -412,9 +412,76 @@ function App() {
 export default App
 
 ```
+### React18:路由懒加载
+* `lazy`
+* `React.Suspense: <React.Suspense fallback={<div>Loading</div>}><About/> </ React.Suspense>`
+```tsx
+// 路由懒加载
+import React, {lazy} from "react";
+import {Navigate} from "react-router-dom";
+// 引入使用lazy 实现路由懒加载
+const Home = lazy(() => import('@/views/Home'));
+const About = lazy(() => import('@/views/About'));
+// 懒加载的模式的组件的写法，外面需要添加一层Loading的提示组件
 
+// 路由表写法
+const routes = [
+    {
+        path: "/",
+        element: <Navigate to="/home"/>
+    },
+    {
+        path: "/home",
+        element:
+            <React.Suspense fallback={<div>Loading...</div>}>
+                <Home/>
+            </React.Suspense>
+    },
+    {
+        path: "/about",
+        element:
+            <React.Suspense fallback={<div>Loading...</div>}>
+                <About/>
+            </React.Suspense>
+    }
+]
+export default routes
 
+```
+### React18:抽取Loading组件函数
+* 解决上述Lazy路由懒加载代码重复问题
+```tsx
+// 路由懒加载
+import React, {lazy} from "react";
+import {Navigate} from "react-router-dom";
+// 引入使用lazy 实现路由懒加载
+const Home = lazy(() => import('@/views/Home'));
+const About = lazy(() => import('@/views/About'));
+// 懒加载的模式的组件的写法，外面需要添加一层Loading的提示组件
+// 封装lazy函数
+const withLoadingComponents = (comp:JSX.Element) => (
+    <React.Suspense fallback={<div>Loading...</div>}>
+        {comp}
+    </React.Suspense>
+)
+// 路由表写法
+const routes = [
+    {
+        path: "/",
+        element: <Navigate to="/home"/>
+    },
+    {
+        path: "/home",
+        element:withLoadingComponents(<Home/>)
+    },
+    {
+        path: "/about",
+        element:withLoadingComponents(<About/>)
+    }
+]
+export default routes
 
+```
 
 
 
