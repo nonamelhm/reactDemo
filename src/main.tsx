@@ -5,7 +5,7 @@ import "reset-css";
 // 其它UI框架
 
 // 全局引入UI
-import "./assets/styles/global.scss";
+import "@/assets/styles/global.scss";
 import App from './App.tsx';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

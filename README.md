@@ -89,6 +89,32 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 )
 
 ```
+# 路径别名的配置
+> 目前ts对@指向src目录是不支持的，vite默认也不支持的，所以需要手动配置@符号的指向
+
+**在vite.config.ts中添加配置：**
+```ts
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import * as path from 'path';
+// https://vitejs.dev/config/
+export default defineConfig({
+    plugins: [react()],
+    resolve:{
+        alias:{
+            '@': path.resolve(__dirname,'./src'),
+        }
+    }
+})
+```
+这时候引入的path模块会报红，但其实我们已经有node，已经有了path模块，只是缺少ts的一些声明配置，所以需要安装关于node这个库的ts声明配置.
+所以需要安装关于node这个库的ts的声明配置。
+```shell
+npm i -D @types/node
+```
+安装成功就没有报红了，如果import还报红，就把引入换成 `import * as path from 'path`;
+
+
 
 
 
