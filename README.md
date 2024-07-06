@@ -137,8 +137,17 @@ npm i -D @types/node
 # scss的模块化管理
 1. 将components->Comp1->comp1.scss改成* components->Comp1->comp1.module.scss
 2. 引入使用
-```index.tsx
+```tsx
+import styles from "./comp1.module.scss";
+function Comp1(){
+    return (
+        <div className={styles.box}>
+            <p>这是Comp1的内容</p>
+        </div>
+    )
+}
 
+export default Comp1;
 ```
 # Antd的初步使用
 * 安装Antd Design
@@ -202,7 +211,7 @@ npm i less@2.7.1 -D
 ```
 # 路由
 ## 路由第一种方式(旧项目，非React18版本)
-### 路由基本配置
+### 旧项目——路由基本配置
 > 首先旧项目很可能不是react18的写法，所以需要熟悉之前的组件路由的写法
 
 1. 【准备界面】首先src下创建views文件夹，views文件夹下创建Home.tsx和About.tsx。大致代码如下：
@@ -283,9 +292,126 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 )
 
 ```
+### 旧项目——实现路由跳转
+* 在src/App.tsx中，使用<Link />组件进行跳转
+```tsx
+import {Outlet, Link} from "react-router-dom";
+function App() {
+  return (
+      <div className="App">
+          <Link to="/home">Home</Link>|
+          <Link to="/about">About</Link>
+          {/* 占位符组件——类似于窗口，用来展示组件的，像vue中的router-view */}
+          <Outlet></Outlet>
+      </div>
+  )
+}
 
+export default App
+```
+### 旧项目——路由重定向
+* 在routes=>index.tsx中，使用<Navigate />组件进行重定向
+```tsx
+import App from '@/App';
+import Home from '@/views/Home';
+import About from '@/views/About';
+import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
+//两种路由模式的组件：BrowserRouters(History模式） HashRouter(Hash模式）
 
+// const baseRoute = ()=>{
+// return (
+// )}
+// 以上写法可以简写为
+const baseRoute = ()=>(
+    <BrowserRouter>
+        <Routes>
+            <Route path="/" element={<App/>}>
+                <Route path="/" element={<Navigate to="/home" />}></Route>
+                <Route path="/home" element={<Home/>}></Route>
+                <Route path="/about" element={<About/>}></Route>
+            </Route>
+        </Routes>
+    </BrowserRouter>
+)
+export default baseRoute;
+```
+## 路由第二种方式(React18版本)
+### 路由表写法
+1. 首先创建路由表routes=>index.tsx
+```tsx
+import Home from '@/views/Home';
+import About from '@/views/About';
+import {Navigate} from "react-router-dom";
 
+// 路由表写法
+const routes = [
+    {
+        path: "/",
+        element:<Navigate to="/home"/>
+    },
+    {
+        path: "/home",
+        element:<Home/>
+    },
+    {
+        path: "/about",
+        element:<About/>
+    }
+]
+export default routes
+
+```
+2. 全局引入main.tsx
+```tsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+// 引入reset-css
+import "reset-css";
+// 其它UI框架
+
+// 全局引入UI
+import "@/assets/styles/global.scss";
+// 路由表写法
+import App from './App.tsx';
+//引入history模式路由!
+import {BrowserRouter} from "react-router-dom";
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+    <React.StrictMode>
+        <BrowserRouter>
+            <App/>
+        </BrowserRouter>
+    </React.StrictMode>,
+)
+
+```
+3. App.tsx 中引入使用
+* 主要为`useRoutes`方式引入使用
+* `Link`进行跳转
+```tsx
+import {useState} from 'react'
+import {Button} from 'antd';
+import {FastBackwardOutlined} from "@ant-design/icons";
+//使用useRoutes方式引入路由表
+import {useRoutes, Link} from "react-router-dom";
+import routes from './routes';
+
+function App() {
+    //引入路由表
+    const outlet = useRoutes(routes);
+    return (
+        <div className="App">
+            <Link to="/home">Home</Link>|
+            <Link to="/about">About</Link>
+            {/*路由表形式使用*/}
+            {outlet}
+        </div>
+    )
+}
+
+export default App
+
+```
 
 
 

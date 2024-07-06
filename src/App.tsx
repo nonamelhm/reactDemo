@@ -1,17 +1,24 @@
-import { useState } from 'react'
+import {useState} from 'react'
 import {Button} from 'antd';
 import {FastBackwardOutlined} from "@ant-design/icons";
-import {Outlet} from "react-router-dom";
-function App() {
-    const [count, setCount] = useState(0);
+// 组件引入
+// import {Outlet, Link} from "react-router-dom";
+import {useRoutes, Link} from "react-router-dom";
+import routes from './routes';
 
-  return (
-      <div className="App">
-          <p>这是App组件</p>
-          {/* 占位符组件——类似于窗口，用来展示组件的，像vue中的router-view */}
-          <Outlet></Outlet>
-      </div>
-  )
+function App() {
+    //引入路由表
+    const outlet = useRoutes(routes);
+    return (
+        <div className="App">
+            <Link to="/home">Home</Link>|
+            <Link to="/about">About</Link>
+            {/* 占位符组件——类似于窗口，用来展示组件的，像vue中的router-view */}
+            {/*<Outlet></Outlet>*/}
+            {/*路由表形式使用*/}
+            {outlet}
+        </div>
+    )
 }
 
 export default App

@@ -6,11 +6,17 @@ import "reset-css";
 
 // 全局引入UI
 import "@/assets/styles/global.scss";
+// 组件写法
+// import Router from '@/routes';
+// 路由表写法
+import App from './App.tsx';
+//引入history模式路由
+import {BrowserRouter} from "react-router-dom";
 
-// import App from './App.tsx';
-import Router from '@/routes';
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <Router />
+        <BrowserRouter>
+            <App/>
+        </BrowserRouter>
     </React.StrictMode>,
 )
