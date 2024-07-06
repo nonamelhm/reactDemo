@@ -174,8 +174,32 @@ function App() {
 
 export default App
 ```
-
-
+# 配置Antd Design样式自动按需引入
+> PS:当前为antd v5，v5不需要配置
+* antd的4.x以上版本已经支持组件按需引入，我们只需要解决样式上的自动按需引入即可
+* 安装插件vite-plugin-style-import
+```shell
+npm install vite-plugin-style-import@1.4.1 -D
+```
+在vite.config.ts中进行配置：
+```ts
+import styleImport,{AntdResolve} from "vite-plugin-style-import";
+export default definedConfig({
+    plugins:[
+        react(),
+        styleImport({
+            resolves:[
+                AntdResolve()
+            ]
+        })
+    ]
+})
+```
+再去除App.tsx中import "antd/dist/antd.css";
+启动项目，发现报错，缺少less
+```shell
+npm i less@2.7.1 -D
+```
 
 
 
