@@ -200,6 +200,89 @@ export default definedConfig({
 ```shell
 npm i less@2.7.1 -D
 ```
+# 路由
+## 路由第一种方式(旧项目，非React18版本)
+### 路由基本配置
+> 首先旧项目很可能不是react18的写法，所以需要熟悉之前的组件路由的写法
+
+1. 【准备界面】首先src下创建views文件夹，views文件夹下创建Home.tsx和About.tsx。大致代码如下：
+```tsx
+const Home=()=>{
+    return (
+        <div className="Home">
+            <p>这是Home组件</p>
+        </div>
+    )
+}
+export default Home;
+
+```
+2. 【配置对应关系】 /src下新建routes文件夹=> 再进去新建index.tsx
+```tsx
+import App from '@/App';
+import Home from '@/views/Home';
+import About from '@/views/About';
+import {BrowserRouter, Routes, Route} from 'react-router-dom';
+//两种路由模式的组件：BrowserRouters(History模式） HashRouter(Hash模式）
+
+// const baseRoute = ()=>{
+// return (
+// )}
+// 以上写法可以简写为
+const baseRoute = ()=>(
+    <BrowserRouter>
+        <Routes>
+            <Route path="/" element={<App/>}>
+                <Route path="/home" element={<Home/>}></Route>
+                <Route path="/about" element={<About/>}></Route>
+            </Route>
+        </Routes>
+    </BrowserRouter>
+)
+export default baseRoute;
+
+```
+3. 占位符使用
+```tsx
+import { useState } from 'react'
+import {Button} from 'antd';
+import {FastBackwardOutlined} from "@ant-design/icons";
+import {Outlet} from "react-router-dom";
+function App() {
+    const [count, setCount] = useState(0);
+
+  return (
+      <div className="App">
+          <p>这是App组件</p>
+          {/* 占位符组件——类似于窗口，用来展示组件的，像vue中的router-view */}
+          <Outlet></Outlet>
+      </div>
+  )
+}
+
+export default App
+
+```
+4. 引入使用
+```tsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+// 引入reset-css
+import "reset-css";
+// 其它UI框架
+
+// 全局引入UI
+import "@/assets/styles/global.scss";
+
+// import App from './App.tsx';
+import Router from '@/routes';
+ReactDOM.createRoot(document.getElementById('root')!).render(
+    <React.StrictMode>
+        <Router />
+    </React.StrictMode>,
+)
+
+```
 
 
 
