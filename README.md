@@ -128,6 +128,12 @@ npm i -D @types/node
   }
 }
 ```
+# scss文件的全局引入会影响其它组件
+> 举例说明，新建Comp1,Comp2.引入会导致样式污染,即使Comp2没引入Comp1.scss，详见代码文件
+* components->Comp1->index.tsx
+* components->Comp1->comp1.scss
+* components->Comp2->index.tsx
+
 
 
 
