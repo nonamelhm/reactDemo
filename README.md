@@ -55,8 +55,40 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 npm i --save-dev sass
 ```
 补充：devDependencies 开发环境中用，打包无需引入
+2. 创建文件夹 assets---->styles----->global.scss
+编写样式，如下：
+```scss
+$color: #fcf;
+body{
+  background-color: $color;
+  //禁用文字选中
+  user-select: none;
+}
+img{
+  //禁止拖动图片
+  --webkit-user-drag:none;
+}
 
+```
+3. 全局引入scss，如下：main.tsx:
+```tsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+// 引入reset-css
+import "reset-css";
+// 其它UI框架
 
+// 全局引入UI
+import "./assets/styles/global.scss";
+import App from './App.tsx';
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+    <React.StrictMode>
+        <App />
+    </React.StrictMode>,
+)
+
+```
 
 
 
