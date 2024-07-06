@@ -19,10 +19,49 @@ npm create vite@latest reactDemo
 }
 ```
 # 目录初始化
-* 多余文件删除
-* 
-* main.tsx——根文件
-* 
+* 多余文件删除 index.css app.css 等，修改app.tsx
+* main.tsx——根文件，去除index.css
+
+# 样式初始化
+在main.tsx中：
+1. 引入reset-css:清除各种间距等
+2. 接下来是UI框架的样式
+## reset-css
+> reset-css比Normalize.css更直接，干净利落去除默认样式，更适合在企业里的场景，所以用reset-css，而不用Normalize.css
+
+* 安装
+```shell
+npm i reset-css
+```
+在src/main.tsx中引入reset-css
+```tsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+// 引入reset-css
+import "reset-css";
+// 其它UI框架
+
+import App from './App.tsx';
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+    <React.StrictMode>
+        <App />
+    </React.StrictMode>,
+)
+```
+# scss安装和初步使用
+1. 安装sass
+```shell
+npm i --save-dev sass
+```
+补充：devDependencies 开发环境中用，打包无需引入
+
+
+
+
+
+
+
 
 
 
