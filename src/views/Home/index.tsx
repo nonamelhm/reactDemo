@@ -55,13 +55,20 @@ const Home: React.FC = () => {
         // 点击跳转到相应的菜单,利用一个hook useNavigate
         navigate(e.key);
     }
+
+    // 展开回收事件
+    const handleOpenChange = (keys:string[])=>{
+        console.log(keys);
+        console.log(keys);
+    }
+
     return (
         <Layout style={{minHeight: '100vh'}}>
             {/*左侧侧边栏*/}
             <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
                 <div className="demo-logo-vertical"/>
-                <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items}
-                      onSelect={(value) => setMenu(value)}/>
+                <Menu theme="dark" defaultSelectedKeys={['/page1']} mode="inline" items={items}
+                      onSelect={(value) => setMenu(value)} onOpenChange={handleOpenChange} />
             </Sider>
             {/*右边内容*/}
             <Layout>

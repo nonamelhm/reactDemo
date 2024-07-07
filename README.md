@@ -778,6 +778,12 @@ import {Outlet, useNavigate} from "react-router-dom";
     <Outlet></Outlet>
 </Content>
 ```
+# 菜单栏
+* [具体查看官网文档](https://ant-design.antgroup.com/components/menu-cn#menu-demo-sider-current)
+## 展开以及回收事件的讲解
+* Menu项 `onOpenChange` 事件
+
+## 设置只有一个展开项
 
 
 
