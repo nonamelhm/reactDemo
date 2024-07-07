@@ -698,6 +698,90 @@ const Home: React.FC = () => {
 
 export default Home;
 ```
+# 点击跳转——点击侧边栏获取到路径，跳转以及嵌套路由
+1. 首先绑定菜单获取到侧边栏的path, key=>绑定的path。利用`useNavagate(path)`进行跳转
+```tsx
+import {useNavigate} from "react-router-dom";   
+const navigate = useNavigate();
+// 选中菜单
+const setMenu = (e) => {
+    console.log('选中路径--');
+    console.log(e);
+    // 点击跳转到相应的菜单,利用一个hook useNavigate
+    navigate(e.key);
+}
+
+   <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items}
+         onSelect={(value) => setMenu(value)}/>
+```
+2. 配置路由表，引入子组件`children`属性。如 routes=>index.tsx:
+```tsx
+// 路由懒加载
+import React, {lazy} from "react";
+import {Navigate} from "react-router-dom";
+// 引入使用lazy 实现路由懒加载
+const Home = lazy(() => import('@/views/Home'));
+const Page1 = lazy(() => import('@/views/Page1'));
+const Page2 = lazy(() => import('@/views/Page2'));
+
+// 懒加载的模式的组件的写法，外面需要添加一层Loading的提示组件
+// 封装lazy函数
+const withLoadingComponents = (comp:JSX.Element) => (
+    <React.Suspense fallback={<div>Loading...</div>}>
+        {comp}
+    </React.Suspense>
+)
+// 路由表写法
+const routes = [
+    {
+        path: "/",
+        element: <Navigate to="/page1"/>
+    },
+    {
+        path: "/",
+        element: withLoadingComponents(<Home />),
+        children:[
+            {
+                path: "/page1",
+                element:withLoadingComponents(<Page1 />)
+            },
+            {
+                path: "/page2",
+                element:withLoadingComponents(<Page2 />)
+            }
+        ]
+    },
+    // 其它非配置路由页面
+    {
+        path: "/*",
+        element: <Navigate to="/page1"/>
+    },
+]
+export default routes
+
+```
+3. 路由占位。Home=》index.tsx中配置
+```tsx
+import {Outlet, useNavigate} from "react-router-dom";
+
+{/*右边内容——白色盒子*/}
+<Content style={{
+    margin: '16px 16px 0',
+    flex: 1,
+    height: '100%',
+    padding: 24,
+    minHeight: 360,
+    background: colorBgContainer,
+    borderRadius: borderRadiusLG,
+}}>
+    {/*窗口部分*/}
+    <Outlet></Outlet>
+</Content>
+```
+
+
+
+
 
 
 
