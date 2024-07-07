@@ -482,6 +482,129 @@ const routes = [
 export default routes
 
 ```
+# 首页布局的解决方案（含侧边栏）
+> (antd侧边栏组件)[https://ant-design.antgroup.com/components/layout-cn]
+1. 删除之前的App.tsx中的`<Link/>`
+```tsx
+// 组件引入
+// import {Outlet, Link} from "react-router-dom";
+// 路由表引入
+import {useRoutes, Link} from "react-router-dom";
+import routes from './routes';
+
+function App() {
+    //引入路由表
+    const outlet = useRoutes(routes);
+    return (
+        <div className="App">
+            {/*<Link to="/home">Home</Link>|*/}
+            {/*<Link to="/about">About</Link>*/}
+            {/* 占位符组件——类似于窗口，用来展示组件的，像vue中的router-view */}
+            {/*<Outlet></Outlet>*/}
+            {/*路由表形式使用*/}
+            {outlet}
+        </div>
+    )
+}
+
+export default App
+
+```
+2. 直接在Home.tsx中复制antd中的侧边栏内容
+```tsx
+import React, { useState } from 'react';
+import {
+    DesktopOutlined,
+    FileOutlined,
+    PieChartOutlined,
+    TeamOutlined,
+    UserOutlined,
+} from '@ant-design/icons';
+import type { MenuProps } from 'antd';
+import { Breadcrumb, Layout, Menu, theme } from 'antd';
+
+const { Header, Content, Footer, Sider } = Layout;
+
+type MenuItem = Required<MenuProps>['items'][number];
+
+function getItem(
+    label: React.ReactNode,
+    key: React.Key,
+    icon?: React.ReactNode,
+    children?: MenuItem[],
+): MenuItem {
+    return {
+        key,
+        icon,
+        children,
+        label,
+    } as MenuItem;
+}
+
+const items: MenuItem[] = [
+    getItem('Option 1', '1', <PieChartOutlined />),
+    getItem('Option 2', '2', <DesktopOutlined />),
+    getItem('User', 'sub1', <UserOutlined />, [
+        getItem('Tom', '3'),
+        getItem('Bill', '4'),
+        getItem('Alex', '5'),
+    ]),
+    getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
+    getItem('Files', '9', <FileOutlined />),
+];
+
+const Home: React.FC = () => {
+    const [collapsed, setCollapsed] = useState(false);
+    const {
+        token: { colorBgContainer, borderRadiusLG },
+    } = theme.useToken();
+
+    return (
+        <Layout style={{ minHeight: '100vh' }}>
+            <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+                <div className="demo-logo-vertical" />
+                <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
+            </Sider>
+            <Layout>
+                <Header style={{ padding: 0, background: colorBgContainer }} />
+                <Content style={{ margin: '0 16px' }}>
+                    <Breadcrumb style={{ margin: '16px 0' }}>
+                        <Breadcrumb.Item>User</Breadcrumb.Item>
+                        <Breadcrumb.Item>Bill</Breadcrumb.Item>
+                    </Breadcrumb>
+                    <div
+                        style={{
+                            padding: 24,
+                            minHeight: 360,
+                            background: colorBgContainer,
+                            borderRadius: borderRadiusLG,
+                        }}
+                    >
+                        Bill is a cat.
+                    </div>
+                </Content>
+                <Footer style={{ textAlign: 'center' }}>
+                    Ant Design ©{new Date().getFullYear()} Created by Ant UED
+                </Footer>
+            </Layout>
+        </Layout>
+    );
+};
+
+export default Home;
+```
+> 关于侧边栏右上logo样式，v5版本的代码没提供样式，logo样式直接`右键检查`将样式复制下来，定义在全局样式global.scss中，如下：
+
+```scss
+
+//首页logo
+.demo-logo-vertical {
+  height: 32px;
+  margin: 16px;
+  background: rgba(255, 255, 255, .2);
+  border-radius: 6px;
+}
+```
 
 
 

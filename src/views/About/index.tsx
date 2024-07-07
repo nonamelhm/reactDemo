@@ -1,3 +1,7 @@
+/**
+ * About组件
+ * @constructor
+ */
 const About=()=>{
     return (
         <div className="Home">
