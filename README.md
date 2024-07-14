@@ -781,10 +781,228 @@ import {Outlet, useNavigate} from "react-router-dom";
 # 菜单栏
 * [具体查看官网文档](https://ant-design.antgroup.com/components/menu-cn#menu-demo-sider-current)
 ## 展开以及回收事件的讲解
-* Menu项 `onOpenChange` 事件
+* Menu项 `onOpenChange` 事件,得到点击的key值再做逻辑处理
 
 ## 设置只有一个展开项
+* Menu项 配置`openKeys`
+```tsx
+ // 菜单展开的项
+const [openKeys, setOpenKeys] = useState<string[]>([]);
 
+// 展开回收事件
+const handleOpenChange = (keys: string[]) => {
+    // 最后一项为当前点击的展开key
+    setOpenKeys([keys[keys.length - 1]]);
+}
+
+
+   <Menu theme="dark" defaultSelectedKeys={['/page1']} mode="inline" items={items}
+         onSelect={(value) => setMenu(value)} onOpenChange={handleOpenChange} openKeys={openKeys}/>
+```
+## 菜单组件抽取
+> Home页抽取menu的所有逻辑出来，建立组件components=>MainMenu=>index.tsx
+
+示例代码如下：
+```tsx
+import {Menu, MenuProps, theme} from "antd";
+import React, {useState} from "react";
+import {DesktopOutlined, FileOutlined, PieChartOutlined, TeamOutlined, UserOutlined} from "@ant-design/icons";
+import {useNavigate} from "react-router-dom";
+
+type MenuItem = Required<MenuProps>['items'][number];
+
+function getItem(
+    label: React.ReactNode,
+    key: React.Key,
+    icon?: React.ReactNode,
+    children?: MenuItem[],
+): MenuItem {
+    return {
+        key,
+        icon,
+        children,
+        label,
+    } as MenuItem;
+}
+
+const items: MenuItem[] = [
+    getItem('Option 1', '/page1', <PieChartOutlined/>),
+    getItem('Option 2', '/page2', <DesktopOutlined/>),
+    getItem('User', 'sub1', <UserOutlined/>, [
+        getItem('Tom', '3'),
+        getItem('Bill', '4'),
+        getItem('Alex', '5'),
+    ]),
+    getItem('Team', 'sub2', <TeamOutlined/>, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
+    getItem('Files', '9', <FileOutlined/>),
+];
+
+
+const MainMenu: React.FC = () => {
+    const navigate = useNavigate();
+    // 选中菜单
+    const setMenu = (e) => {
+        console.log('选中路径--');
+        console.log(e);
+        // 点击跳转到相应的菜单,利用一个hook useNavigate
+        navigate(e.key);
+    }
+    // 菜单展开的项
+    const [openKeys, setOpenKeys] = useState<string[]>([]);
+
+    // 展开回收事件
+    const handleOpenChange = (keys: string[]) => {
+        // 最后一项为当前点击的展开key
+        setOpenKeys([keys[keys.length - 1]]);
+    }
+
+    return (
+        <Menu theme="dark" defaultSelectedKeys={['/page1']} mode="inline" items={items}
+              onSelect={(value) => setMenu(value)} onOpenChange={handleOpenChange} openKeys={openKeys}/>
+    )
+}
+export default MainMenu;
+
+```
+## 菜单数据整理
+* 更换getItem直接书写数据
+
+```tsx
+const items: MenuItem[] = [
+    {
+        label: '栏目 1',
+        key: '/page1',
+        icon: <PieChartOutlined/>
+    },
+    {
+        label: '栏目 2',
+        key: '/page2',
+        icon: <DesktopOutlined/>
+    },
+    {
+        label: '栏目 3',
+        key: '/page3',
+        icon: <UserOutlined/>,
+        children: [
+            {
+                label: 'Tom',
+                key: '/page31',
+            },
+            {
+                label: 'Bill',
+                key: '/page32',
+            },
+            {
+                label: 'Alex',
+                key: '/page33',
+            }
+        ]
+    },
+    {
+        label: '栏目 4',
+        key: '/page4',
+        icon: <TeamOutlined/>,
+        children: [
+            {
+                label: 'Tom',
+                key: '/page41',
+            },
+            {
+                label: 'Bill',
+                key: '/page42',
+            },
+            {
+                label: 'Alex',
+                key: '/page43',
+            }
+        ]
+    },
+]
+
+
+```
+## 其余路径的配置
+* 路由表配置`path:'*'`配置跳转
+```tsx
+// 路由懒加载
+import React, {lazy} from "react";
+import {Navigate} from "react-router-dom";
+// 引入使用lazy 实现路由懒加载
+const Home = lazy(() => import('@/views/Home'));
+const Page1 = lazy(() => import('@/views/Page1'));
+const Page2 = lazy(() => import('@/views/Page2'));
+
+// 懒加载的模式的组件的写法，外面需要添加一层Loading的提示组件
+// 封装lazy函数
+const withLoadingComponents = (comp:JSX.Element) => (
+    <React.Suspense fallback={<div>Loading...</div>}>
+        {comp}
+    </React.Suspense>
+)
+// 路由表写法
+const routes = [
+    {
+        path: "/",
+        element: <Navigate to="/page1"/>
+    },
+    {
+        path: "/",
+        element: withLoadingComponents(<Home />),
+        children:[
+            {
+                path: "/page1",
+                element:withLoadingComponents(<Page1 />)
+            },
+            {
+                path: "/page2",
+                element:withLoadingComponents(<Page2 />)
+            }
+        ]
+    },
+    // 其它非配置路由页面
+    {
+        path: "/*",
+        element: <Navigate to="/page1"/>
+    },
+]
+export default routes
+
+```
+## 刷新时默认当前选中样式
+* Menu 项 ` defaultSelectedKeys`配置
+* 利用`useLocation` hook得到当前`pathname`
+```tsx
+   const currentRoute = useLocation();
+
+ <Menu theme="dark" defaultSelectedKeys={[currentRoute.pathname]} mode="inline" items={items}
+       onSelect={(value) => setMenu(value)} onOpenChange={handleOpenChange} openKeys={openKeys}/>
+```
+## 配置初始展开项
+* 获取路由初始值`pathname`
+* 配置初始值`openKeys`,主要是需要得到的是父辈的key
+
+示例代码如下（自我实现）：
+```tsx
+  const findMenuItem = (items:MenuItem[], key:string) => {
+        for (const item of items) {
+            if (item.key === key) {
+                return item;
+            }
+            if (item.children && item.children.length > 0) {
+                const foundItem = findMenuItem(item.children, key);
+                if (foundItem) {
+                    // 依旧是返回父级
+                    return item;
+                }
+            }
+        }
+        return null;
+    };
+const firstExpandItem = findMenuItem(items, currentRoute.pathname);
+// 菜单展开的项
+const [openKeys, setOpenKeys] = useState<string[]>([firstExpandItem.key]);
+
+```
 
 
 

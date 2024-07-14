@@ -14,9 +14,11 @@ import App from './App.tsx';
 import {BrowserRouter} from "react-router-dom";
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-    <React.StrictMode>
+    //开发环境先去除严格模式 否则会加载2次
+    // <React.StrictMode>
         <BrowserRouter>
             <App/>
         </BrowserRouter>
-    </React.StrictMode>,
+    // </React.StrictMode>
+,
 )

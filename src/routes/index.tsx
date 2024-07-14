@@ -1,6 +1,10 @@
 // 路由懒加载
 import React, {lazy} from "react";
 import {Navigate} from "react-router-dom";
+import Page3 from "@/views/Page3";
+import Page301 from "@/views/Page301";
+import Page302 from "@/views/Page302";
+
 // 引入使用lazy 实现路由懒加载
 const Home = lazy(() => import('@/views/Home'));
 const Page1 = lazy(() => import('@/views/Page1'));
@@ -8,11 +12,12 @@ const Page2 = lazy(() => import('@/views/Page2'));
 
 // 懒加载的模式的组件的写法，外面需要添加一层Loading的提示组件
 // 封装lazy函数
-const withLoadingComponents = (comp:JSX.Element) => (
+const withLoadingComponents = (comp: JSX.Element) => (
     <React.Suspense fallback={<div>Loading...</div>}>
         {comp}
     </React.Suspense>
 )
+
 // 路由表写法
 const routes = [
     {
@@ -22,14 +27,22 @@ const routes = [
     {
         path: "/",
         element: withLoadingComponents(<Home />),
-        children:[
+        children: [
             {
-                path: "/page1",
-                element:withLoadingComponents(<Page1 />)
+                path: "page1",
+                element: withLoadingComponents(<Page1 />)
             },
             {
-                path: "/page2",
-                element:withLoadingComponents(<Page2 />)
+                path: "page2",
+                element: withLoadingComponents(<Page2 />)
+            },
+            {
+                path: "page3/page301",
+                element: withLoadingComponents(<Page301 />),
+            },
+            {
+                path: "page3/page302",
+                element: withLoadingComponents(<Page302 />),
             }
         ]
     },
@@ -39,4 +52,5 @@ const routes = [
         element: <Navigate to="/page1"/>
     },
 ]
-export default routes
+
+export default routes;
