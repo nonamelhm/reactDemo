@@ -1003,6 +1003,235 @@ const firstExpandItem = findMenuItem(items, currentRoute.pathname);
 const [openKeys, setOpenKeys] = useState<string[]>([firstExpandItem.key]);
 
 ```
+# react-redux（old）
+>  视频方式实现感觉不太好，下面换新的方式实现
+
+## 创建并于项目关联
+1. 安装依赖 redux react-redux
+```shell
+npm i redux react-redux --save
+```
+2. 建立文件夹src-->store->reducerOld.ts
+```typescript
+// 定义初始默认值
+const defaultState= {
+    num:20
+}
+let reducerOld = (state = defaultState, action:{type:string,val:number}) => {
+    let newState = JSON.parse(JSON.stringify(state));
+    return newState;
+}
+export default reducerOld
+
+```
+
+3. 建立文件夹src-->store->index.old.ts
+```typescript
+import {legacy_createStore} from 'redux';
+import reducerOld from './reducerOld';
+//定义store
+const store = legacy_createStore(reducerOld);
+export default store;
+
+```
+
+4. 借助`Provider` 引入项目使用 `store`
+
+在main.ts中：
+```tsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+// 引入reset-css
+import "reset-css";
+// 其它UI框架
+// 全局引入UI
+import "@/assets/styles/global.scss";
+// 组件写法
+// import Router from '@/routes';
+// 路由表写法
+import App from './App.tsx';
+//引入history模式路由
+import {BrowserRouter} from "react-router-dom";
+//引入数据
+import {Provider} from "react-redux";
+import store from "@/store";
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+    <Provider store={store}>
+        <BrowserRouter>
+            <App/>
+        </BrowserRouter>
+    </Provider>
+)
+```
+## 在组件中获取数据
+* 借助`useSelector()`hook 获取到state
+* 解构赋值：
+```tsx
+import {useSelector} from "react-redux";
+
+const  Page1 = ()=>{
+    const {num} = useSelector(state => ({
+        num: state.num
+    }))
+    return (
+        <div>这是Page1页面内容 num:{num}</div>
+    )
+}
+export default Page1;
+
+```
+ps:借助redux_devTools插件工具显示的，需要加上此才能看到state
+```typescript
+import {legacy_createStore} from 'redux';
+import reducerOld from './reducerOld';
+//定义store
+//window.__REDUX_DEVTOOLS_EXTENSION__&&window.__REDUX_DEVTOOLS_EXTENSION__()  为了让浏览器正常使用redux-dev-tools
+const store = legacy_createStore(reducerOld,window.__REDUX_DEVTOOLS_EXTENSION__&&window.__REDUX_DEVTOOLS_EXTENSION__());
+export default store;
+
+```
+## 修改仓库数据
+* 借助`useDispatch()`触发事件
+
+1. 使用如下：
+```tsx
+import {useDispatch, useSelector} from "react-redux";
+
+const Page1 = () => {
+    const {num} = useSelector(state => ({
+        num: state.num
+    }))
+    const dispatch = useDispatch();
+    const Add = () => {
+        dispatch({type: 'add', val: 10})
+    }
+    const Sub = () => {
+        dispatch({type: 'sub', val: 10})
+    }
+    return (
+        <div>
+            <p>这是Page1页面内容</p>
+            <p> num:{num}</p>
+            <button onClick={()=>{Add()}}>增加10</button>
+            <button onClick={()=>{Sub()}}>减少10</button>
+        </div>
+
+    )
+}
+export default Page1;
+
+```
+
+2. reducerOld.ts如下：
+```typescript
+// 定义初始默认值
+import {valueOf} from "@typescript-eslint/eslint-plugin";
+
+const defaultState= {
+    num:20
+}
+let reducerOld = (state = defaultState, action:{type:string,val:number}) => {
+    let newState = JSON.parse(JSON.stringify(state));
+    switch(action.type){
+        case 'add':
+            newState.num += action.val;
+            break;
+        case 'sub':
+            newState.num -= action.val;
+            break;
+        default:
+          break;
+    }
+    return newState
+}
+export default reducerOld
+
+```
+## 警告的解决
+1. 新建types=>store.d.ts
+如下：
+```typescript
+
+```
+
+# react-redux(new)
+1. 安装 Redux 和相关依赖
+* 安装 Redux、Redux Toolkit 和 redux-persist
+```shell
+npm install @reduxjs/toolkit react-redux redux-persist --save
+```
+- @reduxjs/toolkit: Redux Toolkit 提供了简化 Redux 开发的工具和 API。
+- react-redux: 用于在 React 应用中连接 Redux。
+- redux-persist: 用于将 Redux store 的状态持久化到本地存储。
+
+2. 设置 Redux Store
+- 创建 Reducer
+> 创建每个模块的 reducer，例如一个计数器和一个用户信息的 reducer。
+```typescript
+// counterSlice.ts
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+interface CounterState {
+    value: number;
+}
+
+const initialState: CounterState = {
+    value: 0,
+};
+
+const counterSlice = createSlice({
+    name: 'counter',
+    initialState,
+    reducers: {
+        increment: (state) => {
+            state.value += 1;
+        },
+        decrement: (state) => {
+            state.value -= 1;
+        },
+    },
+});
+
+export const { increment, decrement } = counterSlice.actions;
+export default counterSlice.reducer;
+
+```
+
+```typescript
+// userSlice.ts
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+interface UserState {
+  userInfo: {
+    name: string;
+    email: string;
+  } | null;
+}
+
+const initialState: UserState = {
+  userInfo: null,
+};
+
+const userSlice = createSlice({
+  name: 'user',
+  initialState,
+  reducers: {
+    setUser: (state, action: PayloadAction<{ name: string; email: string }>) => {
+      state.userInfo = action.payload;
+    },
+    clearUser: (state) => {
+      state.userInfo = null;
+    },
+  },
+});
+
+export const { setUser, clearUser } = userSlice.actions;
+export default userSlice.reducer;
+
+```
+3. 
+
 
 
 
